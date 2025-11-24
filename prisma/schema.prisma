@@ -125,9 +125,9 @@ model Task {
   createdAt     DateTime     @default(now())
 }
 
-model _ApplicationToContact {
-  A String
-  B String
-  @@id([A, B])
+model ApplicationContact {
+  applicationId String
+  contactId     String
+  @@id([applicationId, contactId])
   @@map("ApplicationContacts")
 }
