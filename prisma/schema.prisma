@@ -1,6 +1,11 @@
-generator client { provider = "prisma-client-js" }
+generator client {
+  provider = "prisma-client-js"
+}
 
-datasource db { provider = "postgresql"; url = env("DATABASE_URL") }
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
 
 model User {
   id            String   @id @default(cuid())
@@ -44,7 +49,14 @@ model Job {
   applications Application[]
 }
 
-enum ApplicationStatus { SAVED APPLIED SCREEN INTERVIEW OFFER REJECTED }
+enum ApplicationStatus {
+  SAVED
+  APPLIED
+  SCREEN
+  INTERVIEW
+  OFFER
+  REJECTED
+}
 
 model Application {
   id           String            @id @default(cuid())
