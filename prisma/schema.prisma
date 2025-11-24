@@ -8,18 +8,18 @@ datasource db {
 }
 
 model User {
-  id            String   @id @default(cuid())
-  email         String   @unique
+  id            String        @id @default(cuid())
+  email         String        @unique
   name          String?
   aliasLocal    String
   passwordHash  String
-  createdAt     DateTime @default(now())
+  createdAt     DateTime      @default(now())
   applications  Application[]
   tasks         Task[]
 }
 
 model Company {
-  id           String   @id @default(cuid())
+  id           String        @id @default(cuid())
   name         String
   website      String?
   location     String?
@@ -29,17 +29,17 @@ model Company {
 }
 
 model Contact {
-  id           String   @id @default(cuid())
-  name         String
-  email        String?
-  role         String?
-  company      Company? @relation(fields: [companyId], references: [id])
-  companyId    String?
-  applications Application[]
+  id                  String               @id @default(cuid())
+  name                String
+  email               String?
+  role                String?
+  company             Company?             @relation(fields: [companyId], references: [id])
+  companyId           String?
+  applicationContacts ApplicationContact[]
 }
 
 model Job {
-  id           String   @id @default(cuid())
+  id           String        @id @default(cuid())
   title        String
   sourceUrl    String?
   description  String?
@@ -59,28 +59,29 @@ enum ApplicationStatus {
 }
 
 model Application {
-  id           String            @id @default(cuid())
-  user         User              @relation(fields: [userId], references: [id])
-  userId       String
-  company      Company?          @relation(fields: [companyId], references: [id])
-  companyId    String?
-  job          Job?              @relation(fields: [jobId], references: [id])
-  jobId        String?
-  status       ApplicationStatus @default(SAVED)
-  appliedDate  DateTime?
-  source       String?
-  notes        String?
-  tags         String[]
-  interviews   Interview[]
-  emails       EmailThread[]
-  documents    Document[]
-  contacts     Contact[]         @relation("ApplicationContacts")
-  createdAt    DateTime          @default(now())
-  updatedAt    DateTime          @updatedAt
+  id                  String               @id @default(cuid())
+  user                User                 @relation(fields: [userId], references: [id])
+  userId              String
+  company             Company?             @relation(fields: [companyId], references: [id])
+  companyId           String?
+  job                 Job?                 @relation(fields: [jobId], references: [id])
+  jobId               String?
+  status              ApplicationStatus    @default(SAVED)
+  appliedDate         DateTime?
+  source              String?
+  notes               String?
+  tags                String[]
+  interviews          Interview[]
+  emails              EmailThread[]
+  documents           Document[]
+  applicationContacts ApplicationContact[]
+  tasks               Task[]
+  createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @updatedAt
 }
 
 model Interview {
-  id            String     @id @default(cuid())
+  id            String      @id @default(cuid())
   application   Application @relation(fields: [applicationId], references: [id])
   applicationId String
   type          String
@@ -88,7 +89,7 @@ model Interview {
   location      String?
   outcome       String?
   feedback      String?
-  createdAt     DateTime   @default(now())
+  createdAt     DateTime    @default(now())
 }
 
 model EmailThread {
@@ -114,8 +115,8 @@ model Document {
 }
 
 model Task {
-  id            String      @id @default(cuid())
-  user          User        @relation(fields: [userId], references: [id])
+  id            String       @id @default(cuid())
+  user          User         @relation(fields: [userId], references: [id])
   userId        String
   application   Application? @relation(fields: [applicationId], references: [id])
   applicationId String?
@@ -126,8 +127,11 @@ model Task {
 }
 
 model ApplicationContact {
+  id            String      @id @default(cuid())
+  application   Application @relation(fields: [applicationId], references: [id])
   applicationId String
+  contact       Contact     @relation(fields: [contactId], references: [id])
   contactId     String
-  @@id([applicationId, contactId])
+  @@unique([applicationId, contactId])
   @@map("ApplicationContacts")
 }
