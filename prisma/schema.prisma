@@ -1,0 +1,121 @@
+generator client { provider = "prisma-client-js" }
+
+datasource db { provider = "postgresql"; url = env("DATABASE_URL") }
+
+model User {
+  id            String   @id @default(cuid())
+  email         String   @unique
+  name          String?
+  aliasLocal    String
+  passwordHash  String
+  createdAt     DateTime @default(now())
+  applications  Application[]
+  tasks         Task[]
+}
+
+model Company {
+  id           String   @id @default(cuid())
+  name         String
+  website      String?
+  location     String?
+  notes        String?
+  applications Application[]
+  contacts     Contact[]
+}
+
+model Contact {
+  id           String   @id @default(cuid())
+  name         String
+  email        String?
+  role         String?
+  company      Company? @relation(fields: [companyId], references: [id])
+  companyId    String?
+  applications Application[]
+}
+
+model Job {
+  id           String   @id @default(cuid())
+  title        String
+  sourceUrl    String?
+  description  String?
+  location     String?
+  salaryRange  String?
+  techTags     String[]
+  applications Application[]
+}
+
+enum ApplicationStatus { SAVED APPLIED SCREEN INTERVIEW OFFER REJECTED }
+
+model Application {
+  id           String            @id @default(cuid())
+  user         User              @relation(fields: [userId], references: [id])
+  userId       String
+  company      Company?          @relation(fields: [companyId], references: [id])
+  companyId    String?
+  job          Job?              @relation(fields: [jobId], references: [id])
+  jobId        String?
+  status       ApplicationStatus @default(SAVED)
+  appliedDate  DateTime?
+  source       String?
+  notes        String?
+  tags         String[]
+  interviews   Interview[]
+  emails       EmailThread[]
+  documents    Document[]
+  contacts     Contact[]         @relation("ApplicationContacts")
+  createdAt    DateTime          @default(now())
+  updatedAt    DateTime          @updatedAt
+}
+
+model Interview {
+  id            String     @id @default(cuid())
+  application   Application @relation(fields: [applicationId], references: [id])
+  applicationId String
+  type          String
+  scheduledAt   DateTime?
+  location      String?
+  outcome       String?
+  feedback      String?
+  createdAt     DateTime   @default(now())
+}
+
+model EmailThread {
+  id            String      @id @default(cuid())
+  application   Application? @relation(fields: [applicationId], references: [id])
+  applicationId String?
+  subject       String
+  fromEmail     String
+  toEmail       String
+  snippet       String?
+  providerId    String?
+  receivedAt    DateTime     @default(now())
+}
+
+model Document {
+  id            String      @id @default(cuid())
+  application   Application @relation(fields: [applicationId], references: [id])
+  applicationId String
+  type          String
+  version       Int         @default(1)
+  url           String
+  createdAt     DateTime    @default(now())
+}
+
+model Task {
+  id            String      @id @default(cuid())
+  user          User        @relation(fields: [userId], references: [id])
+  userId        String
+  application   Application? @relation(fields: [applicationId], references: [id])
+  applicationId String?
+  title         String
+  dueAt         DateTime?
+  status        String
+  createdAt     DateTime     @default(now())
+}
+
+model _ApplicationToContact {
+  A String
+  B String
+  @@id([A, B])
+  @@map("ApplicationContacts")
+}
