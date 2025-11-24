@@ -10,7 +10,7 @@
     "jsx": "react-jsx",
     "baseUrl": ".",
     "paths": { "@/*": ["src/*"] },
-    "types": ["node","bcryptjs"],
+    "types": ["node"],
     "skipLibCheck": true
   },
   "include": ["src", "scripts", "tests", "types"]
