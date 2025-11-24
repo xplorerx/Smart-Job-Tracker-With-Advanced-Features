@@ -22,3 +22,5 @@ If UI changed, add before/after.
 - [ ] Docs updated (README or comments)
 - [ ] No secrets committed
 - [ ] Accessibility considered (labels, keyboard, contrast)
+- [ ] If dependencies changed, `pnpm-lock.yaml` is included in this PR
+
